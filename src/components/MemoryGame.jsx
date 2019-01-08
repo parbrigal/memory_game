@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import MemoryCard from "./MemoryCard";
+import MemCard from "./MemCard";
 
 class MemoryGame extends Component {
   state = {
@@ -19,6 +19,7 @@ class MemoryGame extends Component {
     ],
     hasFlippedCard: false,
     firstCard: null,
+    stopTheClicking : false
   };
 
   handleFlip = type => {
@@ -50,18 +51,29 @@ class MemoryGame extends Component {
   };
 
   checkForMatch = secondCard => {
+ 
     const { firstCard,cardList } = this.state;
+    if (firstCard === secondCard)
+    return;
+
+    this.setState({
+      stopTheClicking : true
+    })
+
+
     let newCardListData = [ ...cardList ];
     let firstCardItem = {...cardList[firstCard]}
     let secondCardItem = {...cardList[secondCard]}
 
     if (firstCardItem.cardType === secondCardItem.cardType) {
-      console.log('matches')
+      this.setState({
+        hasFlippedCard : false,
+        firstCard : '',
+        stopTheClicking : false
+        })
       /*
         They match don't flip them back
       */
-     console.log(firstCardItem);
-     console.log(secondCardItem);
     } else {
       /*
         flip them back
@@ -79,7 +91,8 @@ class MemoryGame extends Component {
       this.setState({
         cardList: newCardListData,
         hasFlippedCard : false,
-        firstCard : null
+        firstCard : null,
+        stopTheClicking : false
         })
       }, 1000);
     }
@@ -100,13 +113,14 @@ class MemoryGame extends Component {
         }}
       >
         {cardList.map(card => (
-          <MemoryCard
+          <MemCard
             key={card.id}
             id={card.id}
             thmb={card.cardType}
             callbackFromParent={this.handleFlip}
             hasFlippedCard={this.state.hasFlippedCard}
             flipped={card.flipped}
+            stopTheClicking={this.state.stopTheClicking}
           />
         ))}
       </section>

@@ -4,17 +4,10 @@ import '../App.css';
 class MemoryCard extends Component {
 
     flipCard = (id) => {
-      // this.setState({
-      //   flipped : true
-      // })
-      this.props.callbackFromParent(id);
-        // setTimeout(() => {
-        //   this.setState({
-        //     flipped:false
-        //   });
-        // },1500)
-      
-  
+      if (this.props.stopTheClicking)
+        return;
+
+      this.props.callbackFromParent(id); 
     }
 
   
