@@ -5,18 +5,18 @@ import Confetti from 'react-dom-confetti';
 class MemoryGame extends Component {
   state = {
     cardList: [
-      { id: 0, cardType: "react", flipped: false },
-      { id: 1, cardType: "react", flipped: false },
-      { id: 2, cardType: "angular", flipped: false },
-      { id: 3, cardType: "angular", flipped: false },
-      { id: 4, cardType: "aurelia", flipped: false },
-      { id: 5, cardType: "aurelia", flipped: false },
-      { id: 6, cardType: "backbone", flipped: false },
-      { id: 7, cardType: "backbone", flipped: false },
-      { id: 8, cardType: "vue", flipped: false },
-      { id: 9, cardType: "vue", flipped: false },
-      { id: 10, cardType: "ember", flipped: false },
-      { id: 11, cardType: "ember", flipped: false }
+      // { id: 0, cardType: "react", flipped: false },
+      // { id: 1, cardType: "react", flipped: false },
+      // { id: 2, cardType: "angular", flipped: false },
+      // { id: 3, cardType: "angular", flipped: false },
+      // { id: 4, cardType: "aurelia", flipped: false },
+      // { id: 5, cardType: "aurelia", flipped: false },
+      // { id: 6, cardType: "backbone", flipped: false },
+      // { id: 7, cardType: "backbone", flipped: false },
+      // { id: 8, cardType: "vue", flipped: false },
+      // { id: 9, cardType: "vue", flipped: false },
+      // { id: 10, cardType: "ember", flipped: false },
+      // { id: 11, cardType: "ember", flipped: false }
     ],
     hasFlippedCard: false,
     firstCard: null,
@@ -111,6 +111,22 @@ class MemoryGame extends Component {
     }
   };
 
+  componentWillMount() {
+    const cards = ["react","react","aurelia","aurelia","angular","angular","backbone","backbone","vue","vue","ember","ember"];
+    const newCardListData = [];
+    let idx = 0;
+    while( cards.length ) {
+      let index = Math.floor( Math.random()*cards.length );
+      newCardListData.push({id: idx++, cardType: cards[index],flipped:false});
+      cards.splice( index, 1 ); // Remove the item from the array
+
+      this.setState({
+        cardList : newCardListData
+      })
+  }
+
+  }
+
   render() {
     const { cardList, tries, success,gameOver } = this.state;
     const config = {
@@ -123,7 +139,7 @@ class MemoryGame extends Component {
 
     return (
       <div>
-      <h1 className='f1' style={{textAlign:'center',marginBottom:'20px'}}>Score :{success}/{tries}</h1>
+      <h1 className='f1' style={{textAlign:'center',marginBottom:'20px'}}>Score : {success} out of {tries}</h1>
       <section
         className="memory_game"
         style={{
