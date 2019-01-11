@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import MemCard from "./MemCard";
+import Confetti from 'react-dom-confetti';
 
 class MemoryGame extends Component {
   state = {
@@ -19,7 +20,10 @@ class MemoryGame extends Component {
     ],
     hasFlippedCard: false,
     firstCard: null,
-    stopTheClicking : false
+    stopTheClicking : false,
+    tries:0,
+    success:0,
+    gameOver:false
   };
 
   handleFlip = type => {
@@ -41,7 +45,7 @@ class MemoryGame extends Component {
         {
           this.setState({
             hasFlippedCard:true,
-            firstCard: type
+            firstCard: type,
           })
         }
         else {
@@ -51,13 +55,15 @@ class MemoryGame extends Component {
   };
 
   checkForMatch = secondCard => {
- 
+    let {success, tries } = this.state;
+    tries++;
     const { firstCard,cardList } = this.state;
     if (firstCard === secondCard)
     return;
 
     this.setState({
-      stopTheClicking : true
+      stopTheClicking : true,
+      tries
     })
 
 
@@ -65,11 +71,20 @@ class MemoryGame extends Component {
     let firstCardItem = {...cardList[firstCard]}
     let secondCardItem = {...cardList[secondCard]}
 
+    let gameOver = false;
     if (firstCardItem.cardType === secondCardItem.cardType) {
+      success++;
+      if (success === cardList.length/2)
+      {
+        gameOver = true
+      }
       this.setState({
         hasFlippedCard : false,
         firstCard : '',
-        stopTheClicking : false
+        stopTheClicking : false,
+        success,
+        tries,
+        gameOver
         })
       /*
         They match don't flip them back
@@ -84,23 +99,31 @@ class MemoryGame extends Component {
 
      secondCardItem.flipped = false;
      newCardListData[secondCard] = secondCardItem
-
-     console.log(newCardListData);
      
      setTimeout(() => {
       this.setState({
         cardList: newCardListData,
         hasFlippedCard : false,
         firstCard : null,
-        stopTheClicking : false
+        stopTheClicking : false,
         })
       }, 1000);
     }
   };
 
   render() {
-    const { cardList } = this.state;
+    const { cardList, tries, success,gameOver } = this.state;
+    const config = {
+      angle: 90,
+      spread: 80,
+      startVelocity: 65,
+      elementCount: 250,
+      decay: 0.9
+    };
+
     return (
+      <div>
+      <h1 className='f1' style={{textAlign:'center',marginBottom:'20px'}}>Score :{success}/{tries}</h1>
       <section
         className="memory_game"
         style={{
@@ -109,9 +132,10 @@ class MemoryGame extends Component {
           margin: "auto",
           display: "flex",
           flexWrap: "wrap",
-          perspective: "1000px"
+          perspective: "1000px",
         }}
       >
+        
         {cardList.map(card => (
           <MemCard
             key={card.id}
@@ -123,7 +147,13 @@ class MemoryGame extends Component {
             stopTheClicking={this.state.stopTheClicking}
           />
         ))}
+        
+        <div className="confetti" style={{position:'absolute',top:'320px',left:'320px'}}>
+        <Confetti active={ gameOver } config={ config } />
+        </div>
+        
       </section>
+      </div>
     );
   }
 }
